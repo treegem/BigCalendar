@@ -1,0 +1,3 @@
+graft BigCalendar/templates
+graft BigCalendar/static
+include BigCalendar/schema.sql
