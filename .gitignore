@@ -170,3 +170,4 @@ pyvenv.cfg
 pip-selfcheck.json
 
 .idea/
+/big_calendar.egg-info/
