@@ -1,3 +1,4 @@
+-e git+https://github.com/treegem/BigCalendar@fa0d4794bd4bbc2a9d02e76028bbcba6cd5260fa#egg=big_calendar
 click==6.7
 Flask==0.12.2
 itsdangerous==0.24
