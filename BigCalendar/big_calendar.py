@@ -33,7 +33,7 @@ def initdb_command():
 @app.route('/')
 def show_entries():
     db = get_db(app.config['DATABASE'])
-    cur = db.execute('select title, text from entries order by id desc')
+    cur = db.execute('select title, text, available from entries order by id desc')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
 
@@ -42,11 +42,21 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
+    checkbox = checkbox_to_boolean()
     db = get_db(app.config['DATABASE'])
-    db.execute('insert into entries (title, text) values (?, ?)', [request.form['title'], request.form['text']])
+    db.execute('insert into entries (title, text, available) values (?, ?, ?)',
+               [request.form['title'], request.form['text'], checkbox])
     db.commit()
-    flash('Neuer Eintrag erfolgreich hinzugefuegt./add')
+    flash('Neuer Eintrag erfolgreich hinzugefuegt.')
     return redirect(url_for('show_entries'))
+
+
+def checkbox_to_boolean():
+    if 'checkbox' in request.form:
+        checkbox = True
+    else:
+        checkbox = False
+    return checkbox
 
 
 @app.route('/login', methods=['GET', 'POST'])
