@@ -43,10 +43,9 @@ def add_entry():
     if not session.get('logged_in'):
         abort(401)
     db = get_db(app.config['DATABASE'])
-    db.execute('insert into entries (title, text) values (?, ?)',
-                 [request.form['title'], request.form['text']])
+    db.execute('insert into entries (title, text) values (?, ?)', [request.form['title'], request.form['text']])
     db.commit()
-    flash('New entry was successfully posted')
+    flash('Neuer Eintrag erfolgreich hinzugefuegt./add')
     return redirect(url_for('show_entries'))
 
 
@@ -71,5 +70,3 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
-
-app.run()

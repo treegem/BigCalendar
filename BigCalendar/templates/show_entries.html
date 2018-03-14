@@ -1,21 +1,26 @@
 {% extends "layout.html" %}
 {% block body %}
-  {% if session.logged_in %}
-    <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
-      <dl>
+{% if session.logged_in %}
+<form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+    <dl>
         <dt>Datum:
         <dd><input type=text size=30 name=title>
         <dt>Details (optional):
         <dd><textarea name=text rows=5 cols=40></textarea>
+        <dt>Kannst du?:
+        <dd>Ja<input name=checkbox type=checkbox value=1 />
         <dd><input type=submit value=Abschicken>
-      </dl>
-    </form>
-  {% endif %}
-  <ul class=entries>
-  {% for entry in entries %}
-    <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
-  </ul>
+    </dl>
+</form>
+{% endif %}
+<ul class=entries>
+    {% for entry in entries %}
+    <li {% if entry.text=='apples' %} class="apples" {% endif %}>
+    <h2>{{ entry.title }}</h2>
+    {{ entry.text|safe }}
+    {% else %}
+    <li><em>Nichts los.</em>
+
+        {% endfor %}
+</ul>
 {% endblock %}
