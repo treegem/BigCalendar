@@ -1,8 +1,13 @@
+attrs==17.4.0
 big-calendar==0.0.0
--e git+https://github.com/treegem/BigCalendar@b14cc14d6bc61ac3765d164abd8ed553606e2339#egg=BigCalendar
+-e git+https://github.com/treegem/BigCalendar@de9bfff7c2009a82ba3a7f100c197528749e3614#egg=BigCalendar
 click==6.7
 Flask==0.12.2
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
+pluggy==0.6.0
+py==1.5.2
+pytest==3.4.2
+six==1.11.0
 Werkzeug==0.14.1

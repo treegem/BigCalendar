@@ -5,6 +5,8 @@
     <dl>
         <dt>Datum:
         <dd><input type=text size=30 name=title>
+        <dt>Datum:</dt>
+        <dd><input type=date name="date"></dd>
         <dt>Details (optional):
         <dd><textarea name=text rows=5 cols=40></textarea>
         <dt>Kannst du?:
@@ -15,8 +17,9 @@
 {% endif %}
 <ul class=entries>
     {% for entry in entries %}
-    <li {% if entry.text=='apples' %} class="apples" {% endif %}>
+    <li {% if entry.available==1 %} class="cannot" {% elif entry.available==0 %} class="can" {% endif %}>
     <h2>{{ entry.title }}</h2>
+    {{ entry.concert_date }}
     {{ entry.text|safe }}
     {% else %}
     <li><em>Nichts los.</em>

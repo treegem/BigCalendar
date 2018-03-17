@@ -33,7 +33,7 @@ def initdb_command():
 @app.route('/')
 def show_entries():
     db = get_db(app.config['DATABASE'])
-    cur = db.execute('select title, text, available from entries order by id desc')
+    cur = db.execute('select title, text, concert_date, available from entries order by id desc')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
 
@@ -44,8 +44,8 @@ def add_entry():
         abort(401)
     checkbox = checkbox_to_boolean()
     db = get_db(app.config['DATABASE'])
-    db.execute('insert into entries (title, text, available) values (?, ?, ?)',
-               [request.form['title'], request.form['text'], checkbox])
+    db.execute('insert into entries (title, text, concert_date, available) values (?, ?, ?, ?)',
+               [request.form['title'], request.form['text'], request.form['date'], checkbox])
     db.commit()
     flash('Neuer Eintrag erfolgreich hinzugefuegt.')
     return redirect(url_for('show_entries'))
