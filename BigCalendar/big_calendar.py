@@ -31,7 +31,8 @@ def initdb_command():
 
 
 @app.route('/')
-def show_entries(add=False):
+def show_entries():
+    add = request.args.get('add')
     db = get_db(app.config['DATABASE'])
     cur = db.execute('select text, concert_date, available from entries order by concert_date asc')
     entries = cur.fetchall()
@@ -53,7 +54,7 @@ def add_entry():
 
 @app.route('/add_true')
 def add_true():
-    return redirect(url_for('show_entries', values={'add': True}))
+    return redirect(url_for('show_entries', add=True))
 
 
 def checkbox_to_boolean():
