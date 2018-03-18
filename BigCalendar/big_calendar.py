@@ -31,11 +31,11 @@ def initdb_command():
 
 
 @app.route('/')
-def show_entries():
+def show_entries(add=False):
     db = get_db(app.config['DATABASE'])
-    cur = db.execute('select title, text, concert_date, available from entries order by id desc')
+    cur = db.execute('select text, concert_date, available from entries order by concert_date asc')
     entries = cur.fetchall()
-    return render_template('show_entries.html', entries=entries)
+    return render_template('show_entries.html', entries=entries, add=add)
 
 
 @app.route('/add', methods=['POST'])
@@ -44,11 +44,16 @@ def add_entry():
         abort(401)
     checkbox = checkbox_to_boolean()
     db = get_db(app.config['DATABASE'])
-    db.execute('insert into entries (title, text, concert_date, available) values (?, ?, ?, ?)',
-               [request.form['title'], request.form['text'], request.form['date'], checkbox])
+    db.execute('insert into entries (text, concert_date, available) values (?, ?, ?)',
+               [request.form['text'], request.form['date'], checkbox])
     db.commit()
     flash('Neuer Eintrag erfolgreich hinzugefuegt.')
     return redirect(url_for('show_entries'))
+
+
+@app.route('/add_true')
+def add_true():
+    return redirect(url_for('show_entries', values={'add': True}))
 
 
 def checkbox_to_boolean():
@@ -79,4 +84,3 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
-

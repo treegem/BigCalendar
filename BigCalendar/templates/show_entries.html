@@ -1,10 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 {% if session.logged_in %}
+{% if add==True %}
 <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
     <dl>
-        <dt>Datum:
-        <dd><input type=text size=30 name=title>
         <dt>Datum:</dt>
         <dd><input type=date name="date"></dd>
         <dt>Details (optional):
@@ -15,12 +14,14 @@
     </dl>
 </form>
 {% endif %}
+{% endif %}
 <ul class=entries>
     {% for entry in entries %}
-    <li {% if entry.available==1 %} class="cannot" {% elif entry.available==0 %} class="can" {% endif %}>
-    <h2>{{ entry.title }}</h2>
-    {{ entry.concert_date }}
-    {{ entry.text|safe }}
+        <li {% if entry.available==0 %} class="cannot" {% elif entry.available==1 %} class="can" {% endif %}>
+            <h2>{{ entry.concert_date }}</h2>
+        {% if session.logged_in %}
+            {{ entry.text|safe }}
+        w{% endif %}
     {% else %}
     <li><em>Nichts los.</em>
 
