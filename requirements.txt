@@ -1,6 +1,6 @@
 attrs==17.4.0
 big-calendar==0.0.0
--e git+https://github.com/treegem/BigCalendar@de9bfff7c2009a82ba3a7f100c197528749e3614#egg=BigCalendar
+-e git+https://github.com/treegem/BigCalendar@d62b91a24fcb315be6044ae50d6bbaea95a736e6#egg=BigCalendar
 click==6.7
 Flask==0.12.2
 itsdangerous==0.24
