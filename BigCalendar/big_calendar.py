@@ -36,6 +36,8 @@ def show_entries():
     db = get_db(app.config['DATABASE'])
     cur = db.execute('select text, concert_date, available from entries order by concert_date asc')  # TODO: join with availability
     entries = cur.fetchall()
+    poll_curr_id = db.execute('select id from entries order by id desc limit 1')
+    curr_id = poll_curr_id.fetchall()[0][0]
     return render_template('show_entries.html', entries=entries, add=add)
 
 
