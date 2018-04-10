@@ -17,11 +17,15 @@
 {% endif %}
 <ul class=entries>
     {% for entry in entries %}
-        <li {% if entry.available==0 %} class="cannot" {% elif entry.available==1 %} class="can" {% endif %}>
+        <li {% if entry.available==0 %} class="cannot" {% elif entry.available==1 %} class="can" {% endif %} id=entry.id>
             <h2>{{ entry.concert_date }}</h2>
         {% if session.logged_in %}
             {{ entry.text|safe }}
-        w{% endif %}
+            <form>
+                <input type="checkbox" name="yes" value=1 id=yes {% if entry.available==1 %} checked {% endif %}><label for="yes">Ich kann!</label>
+                <input type="checkbox" name="no" value=1 id=no {% if entry.available==0 %} checked {% endif %}><label for="no">Ich kann nicht!</label>
+            </form>
+        {% endif %}
     {% else %}
     <li><em>Nichts los.</em>
 
