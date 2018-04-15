@@ -1,3 +1,4 @@
+import json
 import os
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
@@ -34,7 +35,8 @@ def initdb_command():
 def show_entries():
     add = request.args.get('add')
     db = get_db(app.config['DATABASE'])
-    cur = db.execute('select id, text, concert_date, available from entries order by concert_date asc')  # TODO: join with availability
+    cur = db.execute(
+        'select id, text, concert_date, available from entries order by concert_date asc')  # TODO: join with availability
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries, add=add)
 
@@ -45,7 +47,8 @@ def add_entry():
         abort(401)
     checkbox = 1  # TODO: remove
     db = get_db(app.config['DATABASE'])
-    db.execute('insert into entries (text, concert_date, available) values (?, ?, ?)',  # TODO: available separated into availability
+    db.execute('insert into entries (text, concert_date, available) values (?, ?, ?)',
+               # TODO: available separated into availability
                [request.form['text'], request.form['date'], checkbox])
     db.commit()
     flash('Neuer Eintrag erfolgreich hinzugefuegt.')
@@ -70,6 +73,12 @@ def login():
             flash('You were logged in')
             return redirect(url_for('show_entries'))
     return render_template('login.html', error=error)
+
+
+@app.route('/georg', methods=['POST'])
+def georg():
+    print('it worked')
+    return json.dumps({'status': 'OKO'})
 
 
 @app.route('/logout')
