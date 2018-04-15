@@ -43,7 +43,7 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    checkbox = checkbox_to_boolean()
+    checkbox = 1  # TODO: remove
     db = get_db(app.config['DATABASE'])
     db.execute('insert into entries (text, concert_date, available) values (?, ?, ?)',  # TODO: available separated into availability
                [request.form['text'], request.form['date'], checkbox])
@@ -55,14 +55,6 @@ def add_entry():
 @app.route('/add_true')
 def add_true():
     return redirect(url_for('show_entries', add=True))
-
-
-def checkbox_to_boolean():
-    if 'checkbox' in request.form:
-        checkbox = True
-    else:
-        checkbox = False
-    return checkbox
 
 
 @app.route('/login', methods=['GET', 'POST'])
