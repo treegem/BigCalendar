@@ -3,7 +3,9 @@ import os
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify
 
-from BigCalendar.utility.db_control import get_db, init_db
+from BigCalendar.utility.db_control import get_db, init_db, full_user_list, full_password_list
+from BigCalendar.utility.id_handling import opposite_id
+from BigCalendar.utility.encryption import encrypt_sha256
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -12,8 +14,6 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'big_calendar.db'),  # TODO: Instance Folders
     DEBUG=True,
     SECRET_KEY='development key',  # TODO
-    USERNAME='admin',  # TODO
-    PASSWORD='default'  # TODO
 ))
 
 
@@ -62,11 +62,12 @@ def add_true():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    database = app.config['DATABASE']
     error = None
     if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
+        if request.form['username'] not in full_user_list(database):
             error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
+        elif encrypt_sha256(request.form['password']) not in full_password_list(database):
             error = 'Invalid password'
         else:
             session['logged_in'] = True
@@ -77,26 +78,9 @@ def login():
 
 
 @app.route('/checkbox_clicked/<id>', methods=['GET', 'POST'])
-def checkbox_clicked(id):
-    other_id = opposite_id(id)
-    return jsonify(other_id=other_id, id=id)
-
-
-def opposite_id(id):
-    split_id = id.split('_')
-    this_id_category = split_id[0]
-    this_id_number = split_id[1]
-    other_id_category = opposite_id_category(this_id_category)
-    other_id = '_'.join([other_id_category, this_id_number])
-    return other_id
-
-
-def opposite_id_category(this_id_category):
-    if this_id_category == 'yes':
-        other_id_category = 'no'
-    elif this_id_category == 'no':
-        other_id_category = 'yes'
-    return other_id_category
+def checkbox_clicked(id_):
+    other_id = opposite_id(id_)
+    return jsonify(other_id=other_id, id=id_)
 
 
 @app.route('/logout')

@@ -25,3 +25,24 @@ def init_db(app):
     with app.open_resource('schema.sql', mode='r') as f:
         db.cursor().executescript(f.read())
     db.commit()
+
+
+def full_user_list(database):
+    users = entry_list(prop='user', table='logins', database=database)
+    return users
+
+
+def full_password_list(database):
+    passwords = entry_list(prop='password', table='logins', database=database)
+    return passwords
+
+
+def entry_list(prop, table, database):
+    db = get_db(database)
+    request = db.execute(
+        'select {} from {}'.format(prop, table))
+    sql_list = request.fetchall()
+    entries = []
+    for entry in sql_list:
+        entries.append(entry[prop])
+    return entries
