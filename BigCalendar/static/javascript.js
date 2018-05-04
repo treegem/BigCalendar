@@ -1,10 +1,15 @@
 $(document).ready(function() {
 
+    function checkbox_clicked(data, id){
+        document.getElementById(data.other_id).checked = !document.getElementById(data.id).checked;
+        alert(data.id);
+    };
+
     $(":checkbox").change(function(){
 
-        $.post("georg");
         var id = this.id;
-        document.write(id);
-
+        $.get("checkbox_clicked/" + id, function(data, id) {
+            checkbox_clicked(data)
+        });
     });
 });

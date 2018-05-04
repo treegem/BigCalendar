@@ -1,7 +1,7 @@
-import json
 import os
+
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-    render_template, flash
+    render_template, flash, jsonify
 
 from BigCalendar.utility.db_control import get_db, init_db
 
@@ -70,19 +70,38 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
+            session['user'] = request.form['username']
             flash('You were logged in')
             return redirect(url_for('show_entries'))
     return render_template('login.html', error=error)
 
 
-@app.route('/georg', methods=['POST'])
-def georg():
-    print('it worked')
-    return json.dumps({'status': 'OKO'})
+@app.route('/checkbox_clicked/<id>', methods=['GET', 'POST'])
+def checkbox_clicked(id):
+    other_id = opposite_id(id)
+    return jsonify(other_id=other_id, id=id)
+
+
+def opposite_id(id):
+    split_id = id.split('_')
+    this_id_category = split_id[0]
+    this_id_number = split_id[1]
+    other_id_category = opposite_id_category(this_id_category)
+    other_id = '_'.join([other_id_category, this_id_number])
+    return other_id
+
+
+def opposite_id_category(this_id_category):
+    if this_id_category == 'yes':
+        other_id_category = 'no'
+    elif this_id_category == 'no':
+        other_id_category = 'yes'
+    return other_id_category
 
 
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
+    session.pop('user', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
