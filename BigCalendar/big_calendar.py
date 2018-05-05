@@ -4,7 +4,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify
 
 from BigCalendar.utility.db_control import get_db, init_db, full_user_list, full_password_list
-from BigCalendar.utility.id_handling import opposite_id
+from BigCalendar.utility.id_handling import opposite_id, split_id
 from BigCalendar.utility.encryption import encrypt_sha256
 
 app = Flask(__name__)
@@ -62,9 +62,9 @@ def add_true():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    database = app.config['DATABASE']
     error = None
     if request.method == 'POST':
+        database = app.config['DATABASE']
         if request.form['username'] not in full_user_list(database):
             error = 'Invalid username'
         elif encrypt_sha256(request.form['password']) not in full_password_list(database):
@@ -77,10 +77,29 @@ def login():
     return render_template('login.html', error=error)
 
 
-@app.route('/checkbox_clicked/<id>', methods=['GET', 'POST'])
-def checkbox_clicked(id_):
+def bool_conversion(checked):
+    if checked == 'true' or checked is True:
+        return True
+    elif checked == 'false' or checked is False:
+        return False
+
+
+@app.route('/checkbox_clicked/<id_>/<checked>', methods=['GET', 'POST'])
+def checkbox_clicked(id_, checked):
+    available = availability(id_, checked)
+    print(available)
     other_id = opposite_id(id_)
     return jsonify(other_id=other_id, id=id_)
+
+
+def availability(id_, checked):
+    checked = bool_conversion(checked)
+    id_category = split_id(id_)[0]
+    if (id_category == 'yes' and checked) or (id_category == 'no' and not checked):
+        available = True
+    elif (id_category == 'yes' and not checked) or (id_category == 'no' and checked):
+        available = False
+    return available
 
 
 @app.route('/logout')
