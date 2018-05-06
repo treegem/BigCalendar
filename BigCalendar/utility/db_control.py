@@ -55,8 +55,8 @@ def read_from_app_db(app, properties, table, additional=''):
     return cur.fetchall()
 
 
-def comma_separated_entries(list):
-    joined_entries = ', '.join(list)
+def comma_separated_entries(list_):
+    joined_entries = ', '.join(list_)
     return joined_entries
 
 
@@ -93,3 +93,13 @@ def get_table_column_names(app, table):
     for column in query:
         column_names.append(column[1])
     return column_names
+
+
+def create_availability_entry(id_, app):
+    column_names = get_table_column_names(app, 'availabilities')
+    insert_into_app_db(
+        app=app,
+        properties=[*column_names],
+        table='availabilities',
+        values=[id_] + [2] * (len(column_names) - 1)
+    )

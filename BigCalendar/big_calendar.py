@@ -4,7 +4,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify
 
 from BigCalendar.utility.db_control import init_db, full_user_list, full_password_list, read_from_app_db, \
-    insert_into_app_db
+    insert_into_app_db, entry_in_app_db, create_availability_entry
 from BigCalendar.utility.encryption import encrypt_sha256
 from BigCalendar.utility.id_handling import opposite_id, split_id
 
@@ -91,9 +91,15 @@ def bool_conversion(checked):
 @app.route('/checkbox_clicked/<id_>/<checked>', methods=['GET', 'POST'])
 def checkbox_clicked(id_, checked):
     available = user_availability(id_, checked)
-
-    other_id = opposite_id(id_)
-    return jsonify(other_id=other_id, id=id_)
+    id_number = int(split_id(id_)[1])
+    id_exists = entry_in_app_db(
+        app=app,
+        table='availabilities',
+        target={'id': id_number}
+    )
+    if not id_exists:
+        create_availability_entry(id_number, app)
+    return jsonify(other_id=(opposite_id(id_)), id=id_)
 
 
 def user_availability(id_, checked):

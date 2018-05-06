@@ -9,11 +9,11 @@ create table entries (
 drop table if exists availabilities;
 create table availabilities (
     id integer primary key not null,
-    'mic' text not null,
-    'bass' text not null,
-    'drums' text not null,
-    'keys' text not null,
-    'guitar' text not null
+    'mic' integer not null,
+    'bass' integer not null,
+    'drums' integer not null,
+    'keys' integer not null,
+    'guitar' integer not null
 );
 
 drop table if exists logins;
