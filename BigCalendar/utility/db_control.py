@@ -5,7 +5,6 @@ from flask import g
 
 def connect_db(database_location):
     """Connects to the specific database."""
-    # rv = sqlite3.connect(app.config['DATABASE'])
     rv = sqlite3.connect(database_location)
     rv.row_factory = sqlite3.Row
     return rv
@@ -39,9 +38,9 @@ def full_password_list(database):
 
 def entry_list(prop, table, database):
     db = get_db(database)
-    request = db.execute(
+    request_ = db.execute(
         'select {} from {}'.format(prop, table))
-    sql_list = request.fetchall()
+    sql_list = request_.fetchall()
     entries = []
     for entry in sql_list:
         entries.append(entry[prop])
@@ -49,8 +48,22 @@ def entry_list(prop, table, database):
 
 
 def read_from_app_db(app, properties, table, additional=''):
-    joined_properties = ', '.join(properties)
+    joined_properties = comma_separated_entries(properties)
     db = get_db(app.config['DATABASE'])
     cur = db.execute(
         'select {0} from {1}{2}'.format(joined_properties, table, additional))
     return cur.fetchall()
+
+
+def comma_separated_entries(list):
+    joined_entries = ', '.join(list)
+    return joined_entries
+
+
+def insert_into_app_db(app, properties, table, values):
+    joined_properties = comma_separated_entries(properties)
+    placeholder = ['?' for _ in range(len(properties))]
+    placeholder = comma_separated_entries(placeholder)
+    db = get_db(app.config['DATABASE'])
+    db.execute('insert into {0} ({1}) values ({2})'.format(table, joined_properties, placeholder), values)
+    db.commit()
