@@ -3,10 +3,10 @@ import os
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify
 
-from BigCalendar.utility.db_control import get_db, init_db, full_user_list, full_password_list, read_from_app_db, \
+from BigCalendar.utility.db_control import init_db, full_user_list, full_password_list, read_from_app_db, \
     insert_into_app_db
-from BigCalendar.utility.id_handling import opposite_id, split_id
 from BigCalendar.utility.encryption import encrypt_sha256
+from BigCalendar.utility.id_handling import opposite_id, split_id
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -90,18 +90,19 @@ def bool_conversion(checked):
 
 @app.route('/checkbox_clicked/<id_>/<checked>', methods=['GET', 'POST'])
 def checkbox_clicked(id_, checked):
-    available = availability(id_, checked)
+    available = user_availability(id_, checked)
+
     other_id = opposite_id(id_)
     return jsonify(other_id=other_id, id=id_)
 
 
-def availability(id_, checked):
+def user_availability(id_, checked):
     checked = bool_conversion(checked)
     id_category = split_id(id_)[0]
     if (id_category == 'yes' and checked) or (id_category == 'no' and not checked):
-        available = True
+        available = 1
     elif (id_category == 'yes' and not checked) or (id_category == 'no' and checked):
-        available = False
+        available = 0
     return available
 
 

@@ -67,3 +67,29 @@ def insert_into_app_db(app, properties, table, values):
     db = get_db(app.config['DATABASE'])
     db.execute('insert into {0} ({1}) values ({2})'.format(table, joined_properties, placeholder), values)
     db.commit()
+
+
+def entry_in_app_db(app, table: str, target: dict):
+    found = False
+    target_str = list(target.keys())[0]
+    if target_str not in get_table_column_names(app, table):
+        return found
+    target_val = list(target.values())[0]
+    entries = read_from_app_db(
+        app=app,
+        properties=[target_str],
+        table=table,
+    )
+    for entry in entries:
+        if entry[target_str] == target_val:
+            found = True
+    return found
+
+
+def get_table_column_names(app, table):
+    db = get_db(app.config['DATABASE'])
+    query = db.execute('pragma table_info({})'.format(table)).fetchall()
+    column_names = []
+    for column in query:
+        column_names.append(column[1])
+    return column_names

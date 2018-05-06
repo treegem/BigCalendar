@@ -42,3 +42,22 @@ def test_insert_into_app_db():
         )
     assert logins[0]['user'] == 'user_test'
     assert logins[0]['password'] == 'password_test'
+
+
+def test_entry_in_app_db():
+    with app.app_context():
+        found = entry_in_app_db(
+            app=app,
+            table='logins',
+            target={'user': 'user_test'}
+        )
+    assert found
+
+
+def test_get_table_column_names():
+    with app.app_context():
+        column_names = get_table_column_names(
+            app=app,
+            table='entries',
+        )
+    assert column_names == ['id', 'text', 'available', 'concert_date']
