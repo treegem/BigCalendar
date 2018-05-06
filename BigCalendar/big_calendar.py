@@ -3,7 +3,8 @@ import os
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify
 
-from BigCalendar.utility.db_control import get_db, init_db, full_user_list, full_password_list, read_from_app_db
+from BigCalendar.utility.db_control import get_db, init_db, full_user_list, full_password_list, read_from_app_db, \
+    insert_into_app_db
 from BigCalendar.utility.id_handling import opposite_id, split_id
 from BigCalendar.utility.encryption import encrypt_sha256
 
@@ -48,11 +49,12 @@ def add_entry():
     if not session.get('logged_in'):
         abort(401)
     checkbox = 1  # TODO: remove
-    db = get_db(app.config['DATABASE'])
-    db.execute('insert into entries (text, concert_date, available) values (?, ?, ?)',
-               # TODO: available separated into availability
-               [request.form['text'], request.form['date'], checkbox])
-    db.commit()
+    insert_into_app_db(
+        app=app,
+        properties=['text', 'concert_date', 'available'],
+        table='entries',
+        values=[request.form['text'], request.form['date'], checkbox]
+    )
     flash('Neuer Eintrag erfolgreich hinzugefuegt.')
     return redirect(url_for('show_entries'))
 
