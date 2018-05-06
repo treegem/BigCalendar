@@ -4,12 +4,10 @@ from BigCalendar.utility.db_control import *
 from BigCalendar.big_calendar import app
 
 app.config['DATABASE'] = 'test.db'
+database_ = app.config['DATABASE']
 
 
 def test_db_creation():
-
-    database_ = app.config['DATABASE']
-
     if os.path.isfile(database_):
         os.unlink(database_)
     assert not os.path.isfile(database_)

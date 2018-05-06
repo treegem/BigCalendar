@@ -3,7 +3,7 @@ import os
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify
 
-from BigCalendar.utility.db_control import get_db, init_db, full_user_list, full_password_list
+from BigCalendar.utility.db_control import get_db, init_db, full_user_list, full_password_list, read_from_app_db
 from BigCalendar.utility.id_handling import opposite_id, split_id
 from BigCalendar.utility.encryption import encrypt_sha256
 
@@ -34,10 +34,12 @@ def initdb_command():
 @app.route('/')
 def show_entries():
     add = request.args.get('add')
-    db = get_db(app.config['DATABASE'])
-    cur = db.execute(
-        'select id, text, concert_date, available from entries order by concert_date asc')  # TODO: join with availability
-    entries = cur.fetchall()
+    entries = read_from_app_db(
+        app=app,
+        properties=['id', 'text', 'concert_date', 'available'],
+        table='entries',
+        additional=' order by concert_date asc'
+    )
     return render_template('show_entries.html', entries=entries, add=add)
 
 
@@ -87,7 +89,6 @@ def bool_conversion(checked):
 @app.route('/checkbox_clicked/<id_>/<checked>', methods=['GET', 'POST'])
 def checkbox_clicked(id_, checked):
     available = availability(id_, checked)
-    print(available)
     other_id = opposite_id(id_)
     return jsonify(other_id=other_id, id=id_)
 

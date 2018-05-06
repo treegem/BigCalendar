@@ -46,3 +46,11 @@ def entry_list(prop, table, database):
     for entry in sql_list:
         entries.append(entry[prop])
     return entries
+
+
+def read_from_app_db(app, properties, table, additional=''):
+    joined_properties = ', '.join(properties)
+    db = get_db(app.config['DATABASE'])
+    cur = db.execute(
+        'select {0} from {1}{2}'.format(joined_properties, table, additional))
+    return cur.fetchall()
