@@ -15,7 +15,7 @@
 {% endif %}
 <ul class=entries>
     {% for entry in entries %}
-        <li {% if entry.available==0 %} class="cannot" {% elif entry.available==1 %} class="can" {% endif %} id=entry.id>
+        <li {% if entry.available==0 %} class="cannot" {% elif entry.available==1 %} class="can" {% elif entry.available==2 %} class="dunno" {% endif %} id=entry.id>
             <h2>{{ entry.concert_date }}</h2>
         {% if session.logged_in %}
             {{ entry.text|safe }}

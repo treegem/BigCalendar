@@ -61,3 +61,20 @@ def test_get_table_column_names():
             table='entries',
         )
     assert column_names == ['id', 'text', 'available', 'concert_date']
+
+
+def test_update_app_db():
+    with app.app_context():
+        update_app_db(
+            app=app,
+            table='logins',
+            property='user',
+            value='"user_test2"',
+            where='user = "user_test"'
+        )
+        found = entry_in_app_db(
+            app=app,
+            table='logins',
+            target={'user': 'user_test2'}
+        )
+    assert found

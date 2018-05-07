@@ -4,7 +4,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify
 
 from BigCalendar.utility.db_control import init_db, full_user_list, full_password_list, read_from_app_db, \
-    insert_into_app_db, entry_in_app_db, create_availability_entry
+    insert_into_app_db, entry_in_app_db, create_availability_entry, update_app_db, update_entries_availability
 from BigCalendar.utility.encryption import encrypt_sha256
 from BigCalendar.utility.id_handling import opposite_id, split_id
 
@@ -48,12 +48,11 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    checkbox = 1  # TODO: remove
     insert_into_app_db(
         app=app,
         properties=['text', 'concert_date', 'available'],
         table='entries',
-        values=[request.form['text'], request.form['date'], checkbox]
+        values=[request.form['text'], request.form['date'], 2]
     )
     flash('Neuer Eintrag erfolgreich hinzugefuegt.')
     return redirect(url_for('show_entries'))
@@ -92,13 +91,13 @@ def bool_conversion(checked):
 def checkbox_clicked(id_, checked):
     available = user_availability(id_, checked)
     id_number = int(split_id(id_)[1])
-    id_exists = entry_in_app_db(
-        app=app,
-        table='availabilities',
-        target={'id': id_number}
-    )
+    id_exists = entry_in_app_db(app=app, table='availabilities', target={'id': id_number})
     if not id_exists:
         create_availability_entry(id_number, app)
+    update_app_db(app=app, table='availabilities', property=session['user'], value=available,
+                  where='id = {}'.format(id_number))
+    update_entries_availability(app, id_number)
+
     return jsonify(other_id=(opposite_id(id_)), id=id_)
 
 

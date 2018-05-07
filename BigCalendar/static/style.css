@@ -20,3 +20,5 @@ h2              { font-size: 1.2em; }
 .cannot h2      { background: #F7C7C7; }
 .can            { background: #C7F7D3; }
 .can h2         { background: #C7F7D3; }
+.dunno          { background: #FFFF99; }
+.dunno h2       { background: #FFFF99; }

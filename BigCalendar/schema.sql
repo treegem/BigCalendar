@@ -16,7 +16,6 @@ create table availabilities (
     'guitar' integer not null
 );
 
-drop table if exists logins;
 create table logins (
     id integer primary key autoincrement,
     'user' text not null,

@@ -2,6 +2,7 @@ $(document).ready(function() {
 
     function checkbox_clicked(data){
         document.getElementById(data.other_id).checked = !document.getElementById(data.id).checked;
+        window.location.reload(false);
     };
 
     $(":checkbox").change(function(){

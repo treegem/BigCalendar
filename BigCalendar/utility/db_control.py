@@ -103,3 +103,29 @@ def create_availability_entry(id_, app):
         table='availabilities',
         values=[id_] + [2] * (len(column_names) - 1)
     )
+
+
+def update_app_db(app, table, property, value, where):
+    db = get_db(app.config['DATABASE'])
+    db.execute('update {0} set {1} = {2} where {3}'.format(table, property, value, where))
+    db.commit()
+
+
+def update_entries_availability(app, id_number):
+    column_names = get_table_column_names(app, 'availabilities')[1:]
+    user_availabilities = read_from_app_db(app=app, table='availabilities', properties=column_names,
+                                           additional=' where id = {}'.format(id_number))[0]
+    id_availability = collective_availability(column_names, user_availabilities)
+    update_app_db(app=app, table='entries', property='available', value=id_availability,
+                  where='id = {}'.format(id_number))
+
+
+def collective_availability(column_names, user_availabilities):
+    id_availability = 1
+    for user in column_names:
+        if user_availabilities[user] == 0:
+            id_availability = 0
+            break
+        elif user_availabilities[user] == 2:
+            id_availability = 2
+    return id_availability
