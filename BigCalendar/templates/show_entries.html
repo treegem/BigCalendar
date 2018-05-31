@@ -18,10 +18,15 @@
         <li {% if entry.available==0 %} class="cannot" {% elif entry.available==1 %} class="can" {% elif entry.available==2 %} class="dunno" {% endif %} id=entry.id>
             <h2>{{ entry.concert_date }}</h2>
         {% if session.logged_in %}
+            {% if entry.available==0 %}
+            <p>Kann nicht:</p>
+            {% elif entry.available==2 %}
+            <p>Steht noch aus: </p>
+            {% endif %}
             {{ entry.text|safe }}
             <form>
                 <input type="checkbox" name="yes" value=1 id={{"yes_"+entry.id|string}} {% if entry.available==1 %} checked="checked" {% endif %}><label for="yes">Ich kann!</label>
-                <input type="checkbox" name="no" value=1 id={{"no_"+entry.id|string}} {% if entry.available==0 %} checked="checked" {% endif %}><label for="no">Ich kann nicht!</label>
+                <input type="checkbox" name="no" value=1 id={{"no_"+entry.id|string}}><label for="no">Ich kann nicht!</label>
             </form>
         {% endif %}
     {% else %}

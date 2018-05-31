@@ -2,6 +2,8 @@ import sqlite3
 
 from flask import g
 
+from BigCalendar.utility.db_pre_post_processing import collective_availability, comma_separated_entries
+
 
 def connect_db(database_location):
     """Connects to the specific database."""
@@ -53,11 +55,6 @@ def read_from_app_db(app, properties, table, additional=''):
     cur = db.execute(
         'select {0} from {1}{2}'.format(joined_properties, table, additional))
     return cur.fetchall()
-
-
-def comma_separated_entries(list_):
-    joined_entries = ', '.join(list_)
-    return joined_entries
 
 
 def insert_into_app_db(app, properties, table, values):
@@ -120,12 +117,3 @@ def update_entries_availability(app, id_number):
                   where='id = {}'.format(id_number))
 
 
-def collective_availability(column_names, user_availabilities):
-    id_availability = 1
-    for user in column_names:
-        if user_availabilities[user] == 0:
-            id_availability = 0
-            break
-        elif user_availabilities[user] == 2:
-            id_availability = 2
-    return id_availability
